@@ -126,7 +126,7 @@ class Unity3DBuilder:
 
     def chmod(self, platform: str) -> None:
         """
-        Run wsl chmod +xos x
+        Run wsl chmod +x
         Ignored if WSL 2 is not installed.
 
         :param platform: The name of the platform.

@@ -135,19 +135,18 @@ class Unity3DBuilder:
         if platform == "Windows":
             return
 
-        p = self.dest_dir.joinpath(platform).joinpath(self.project_name)
-        assert p.exists(), f"Directory not found: {p.resolve()}"
-
         if platform == "OSX":
-            p = p.joinpath(f"{self.project_name}.app/Contents/MacOS/{self.project_name}")
+            p = self.dest_dir.joinpath(f"OSX/{self.project_name}.app/Contents/MacOS/{self.project_name}")
         elif platform == "Linux":
-            p = p.joinpath(f"{self.project_name}.x86_64")
+            p = self.dest_dir.joinpath(f"Linux/{self.project_name}.x86_64")
         else:
             raise Exception(f"Platform not supported: {platform}")
 
         assert p.exists(), f"File not found: {p.resolve()}"
         try:
-            call(["wsl", "chmod", "+x", str(p.resolve())])
+            p = str(p.resolve())
+            p = f"/mnt/c/{p[2:]}".replace("\\", "/")
+            call(["wsl", "chmod", "+x", p])
         except FileNotFoundError:
             return
 
@@ -173,8 +172,6 @@ class Unity3DBuilder:
 
 
 if __name__ == "__main__":
-    call(["wso"])
-    exit()
     from argparse import ArgumentParser
 
     parser = ArgumentParser()

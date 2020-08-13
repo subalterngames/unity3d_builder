@@ -1,5 +1,7 @@
 # Unity3D Builder
 
+Create Unity3D standalone builds of a project for Windows, OS X, and Linux. Then, create zip files for each platform.
+
 ## Requirements
 
 - Python3

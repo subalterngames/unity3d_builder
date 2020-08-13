@@ -124,8 +124,57 @@ class Unity3DBuilder:
 
         return dest
 
+    def chmod(self, platform: str) -> None:
+        """
+        Run wsl chmod +xos x
+        Ignored if WSL 2 is not installed.
+
+        :param platform: The name of the platform.
+        """
+
+        if platform == "Windows":
+            return
+
+        p = self.dest_dir.joinpath(platform).joinpath(self.project_name)
+        assert p.exists(), f"Directory not found: {p.resolve()}"
+
+        if platform == "OSX":
+            p = p.joinpath(f"{self.project_name}.app/Contents/MacOS/{self.project_name}")
+        elif platform == "Linux":
+            p = p.joinpath(f"{self.project_name}.x86_64")
+        else:
+            raise Exception(f"Platform not supported: {platform}")
+
+        assert p.exists(), f"File not found: {p.resolve()}"
+        try:
+            call(["wsl", "chmod", "+x", str(p.resolve())])
+        except FileNotFoundError:
+            return
+
+    def create(self) -> None:
+        """
+        Create each standalone build and zip it up.
+        """
+
+        platform_directories = self.create_platform_directories()
+
+        zip_files: Dict[str, Path] = {}
+
+        for platform_dir in platform_directories:
+            # Create the build.
+            self.create_build(platform_dir, platform_directories[platform_dir])
+            # Run chmod +x
+            self.chmod(platform=platform_dir)
+
+            # Zip everything up.
+            zip_file = self.zip(platform_dir)
+            zip_files.update({platform_dir: zip_file})
+        print("DONE!")
+
 
 if __name__ == "__main__":
+    call(["wso"])
+    exit()
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
@@ -133,18 +182,5 @@ if __name__ == "__main__":
     parser.add_argument("--dest", type=str, help="The path to the destination (output) directory.")
     args = parser.parse_args()
 
-    rc = Unity3DBuilder(project_path=args.project, dest_dir=args.dest)
-    release_directory, platform_directories = rc.create_platform_directories()
-
-    zip_files: Dict[str, Path] = {}
-
-    for platform_dir in platform_directories:
-        # Create the build.
-        rc.create_build(platform_dir, platform_directories[platform_dir])
-
-        # Zip everything up.
-        zip_file = rc.zip(platform_dir)
-        zip_files.update({platform_dir: zip_file})
-
-    # Upload the zip files.
-    print("DONE!")
+    ub = Unity3DBuilder(project_path=args.project, dest_dir=args.dest)
+    ub.create()

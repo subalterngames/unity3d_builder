@@ -1,1 +1,3 @@
 .idea/
+unity3d_builder.egg-info/
+unity3d_builder/__pycache__/

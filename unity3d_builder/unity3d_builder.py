@@ -16,8 +16,8 @@ class Unity3DBuilder:
                  "Linux": {"extension": ".x86_64", "call": "-buildLinux64Player"}}
     # Use this argument when calling Unity.
     PROJECT_PATH_ARG = "-projectPath"
-    # 7z base call.
-    ZIP_CALL = ["C:/Program Files/7-Zip/7z.exe", "a", "-r"]
+    # Zip base call.
+    ZIP_CALL = ["wsl", "zip", "-rm"]
 
     def __init__(self, project_path: str, dest_dir: str):
         """

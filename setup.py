@@ -4,7 +4,7 @@ from pathlib import Path
 setup(
     name="unity3d_builder",
     packages={"unity3d_builder"},
-    version="1.0",
+    version="1.1",
     license="MIT",
     description="Create Unity3D standalone applications of a project for Windows, OS X, and Linux.",
     long_description=Path("README.md").read_text(encoding="utf-8"),

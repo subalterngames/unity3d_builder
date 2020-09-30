@@ -79,15 +79,19 @@ class Unity3DBuilder:
         print(f"Created platform directories.")
         return platforms
 
-    def create_build(self, platform: str, platform_path: Path) -> None:
+    def create_build(self, platform: str, platform_path: Path, exe_name: str = None) -> None:
         """
         Create the build for a platform.
 
         :param platform: The platform directory.
         :param platform_path: The path to the platform directory.
+        :param exe_name: The name of the executable. If None, use the project name.
         """
 
-        build_path = platform_path.joinpath(f"{self.project_name}{Unity3DBuilder.PLATFORMS[platform]['extension']}")
+        if exe_name is None:
+            exe_name = self.project_name
+
+        build_path = platform_path.joinpath(f"{exe_name}{Unity3DBuilder.PLATFORMS[platform]['extension']}")
 
         build_call = self.get_unity_call()[:]
         build_call.extend([Unity3DBuilder.PROJECT_PATH_ARG,
